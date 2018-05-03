@@ -1,0 +1,31 @@
+
+
+CREATE COMPUTE MODULE TF_GIT_API_TEST_02_Transform
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- CALL CopyMessageHeaders();
+		CALL CopyEntireMessage();
+		
+		IF CARDINALITY(InputRoot.HL7.GIT[]) = 0 THEN
+			SET OutputRoot.HL7.GIT.f2.c2 = 'UPDATE';
+		END IF;
+		
+		SET OutputRoot.HL7.SCH.f20.c2 = LOWER(InputRoot.HL7.SCH.f20.c2);
+		
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;
