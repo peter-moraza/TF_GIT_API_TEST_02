@@ -6,11 +6,20 @@ CREATE COMPUTE MODULE TF_GIT_API_TEST_02_Transform
 		-- CALL CopyMessageHeaders();
 		CALL CopyEntireMessage();
 		
+		DECLARE cnt INTEGER 0;
+		DECLARE i INTEGER 1;
+		
 		IF CARDINALITY(InputRoot.HL7.GIT[]) = 0 THEN
 			SET OutputRoot.HL7.GIT.f2.c2 = 'UPDATE';
 		END IF;
 		
 		SET OutputRoot.HL7.SCH.f20.c2 = LOWER(InputRoot.HL7.SCH.f20.c2);
+		
+		SET cnt = CARDINALITY(InputRoot.HL7.RGS.f3.*[]);
+		WHILE i <= cnt DO
+			SET OutputRoot.HL7.RGS.f3.*[i] = LOWER(InputRoot.HL7.RGS.f3.*[i]);
+			SET i = i + 1;
+		END WHILE;
 		
 		RETURN TRUE;
 	END;
